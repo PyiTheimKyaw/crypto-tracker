@@ -1,31 +1,36 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../favorites/presentation/providers/favorites_provider.dart';
 import '../../domain/entities/coin.dart';
 
-class CoinListItem extends StatelessWidget {
-  const CoinListItem({
-    super.key,
-    required this.coin,
-    this.onTap,
-    this.onFavoriteTap,
-  });
+class CoinListItem extends ConsumerWidget {
+  const CoinListItem({super.key, required this.coin, this.onTap});
 
   final Coin coin;
   final VoidCallback? onTap;
-  final VoidCallback? onFavoriteTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final AppSemanticColors semantic = context.semantic;
     final bool positive = coin.priceChangePercentage24h >= 0;
     final Color changeColor =
         positive ? semantic.positive : semantic.negative;
     final Color changeBg =
         positive ? semantic.positiveSoft : semantic.negativeSoft;
+
+    final AsyncValue<Set<String>> favoritesAsync =
+        ref.watch(favoritesStreamProvider);
+    final bool isFavorite = favoritesAsync.maybeWhen(
+      data: (Set<String> ids) => ids.contains(coin.id),
+      orElse: () => coin.isFavorite,
+    );
 
     return InkWell(
       onTap: onTap,
@@ -65,14 +70,15 @@ class CoinListItem extends StatelessWidget {
             IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+              tooltip: isFavorite ? 'Unfavorite' : 'Favorite',
               icon: Icon(
-                coin.isFavorite ? Icons.star : Icons.star_border,
-                color: coin.isFavorite
+                isFavorite ? Icons.star : Icons.star_border,
+                color: isFavorite
                     ? semantic.favoriteActive
                     : semantic.favoriteInactive,
                 size: 20,
               ),
-              onPressed: onFavoriteTap,
+              onPressed: () => _onToggle(context, ref),
             ),
             const SizedBox(width: 4),
             Column(
@@ -101,6 +107,31 @@ class CoinListItem extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _onToggle(BuildContext context, WidgetRef ref) async {
+    final Either<Failure, bool> result =
+        await ref.read(toggleFavoriteProvider)(coin.id);
+    if (!context.mounted) {
+      return;
+    }
+    result.match(
+      (Failure failure) {
+        ScaffoldMessenger.maybeOf(context)
+          ?..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(
+                'Could not update favorite: ${failure.message}',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              duration: const Duration(seconds: 3),
+            ),
+          );
+      },
+      (_) {},
     );
   }
 }

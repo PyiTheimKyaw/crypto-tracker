@@ -1,5 +1,7 @@
 import 'package:crypto_tracker/app.dart';
 import 'package:crypto_tracker/core/error/failure.dart';
+import 'package:crypto_tracker/features/favorites/domain/repositories/favorites_repository.dart';
+import 'package:crypto_tracker/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:crypto_tracker/features/market/domain/entities/coin.dart';
 import 'package:crypto_tracker/features/market/domain/entities/global_market.dart';
 import 'package:crypto_tracker/features/market/domain/entities/trending_coin.dart';
@@ -10,6 +12,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'helpers/market_mocks.dart';
+
+class _MockFavorites extends Mock implements FavoritesRepository {}
 
 void main() {
   testWidgets('Market home renders title + LIVE label', (
@@ -33,9 +37,17 @@ void main() {
           const Right<Failure, List<TrendingCoin>>(<TrendingCoin>[]),
     );
 
+    final _MockFavorites favs = _MockFavorites();
+    when(favs.watchFavorites)
+        .thenAnswer((_) => Stream<Set<String>>.value(<String>{}));
+    when(favs.getFavoriteIds).thenAnswer((_) async => <String>{});
+
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [marketRepositoryProvider.overrideWithValue(repo)],
+        overrides: [
+          marketRepositoryProvider.overrideWithValue(repo),
+          favoritesRepositoryProvider.overrideWithValue(favs),
+        ],
         child: const CryptoTrackerApp(),
       ),
     );

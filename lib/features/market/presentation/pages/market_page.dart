@@ -224,9 +224,6 @@ class _MarketPageState extends ConsumerState<MarketPage> {
               onTap: () {
                 // wired in Phase 17 (coin detail navigation)
               },
-              onFavoriteTap: () {
-                // wired in Phase 15 (favorites toggle)
-              },
             );
           },
         );

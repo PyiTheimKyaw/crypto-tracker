@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:crypto_tracker/core/error/failure.dart';
 import 'package:crypto_tracker/core/l10n/generated/app_localizations.dart';
 import 'package:crypto_tracker/core/theme/app_theme.dart';
+import 'package:crypto_tracker/features/favorites/domain/repositories/favorites_repository.dart';
+import 'package:crypto_tracker/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:crypto_tracker/features/market/domain/entities/coin.dart';
 import 'package:crypto_tracker/features/market/domain/entities/global_market.dart';
 import 'package:crypto_tracker/features/market/domain/entities/trending_coin.dart';
@@ -17,6 +19,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../helpers/market_mocks.dart';
+
+class _MockFavorites extends Mock implements FavoritesRepository {}
 
 const Coin _btc = Coin(
   id: 'bitcoin',
@@ -48,9 +52,16 @@ const GlobalMarket _emptyGlobal = GlobalMarket(
   marketCapChangePercentage24hUsd: 0,
 );
 
-Widget _harness({required MockMarketRepository repo}) {
+Widget _harness({
+  required MockMarketRepository repo,
+  FavoritesRepository? favorites,
+}) {
+  final FavoritesRepository favs = favorites ?? _stubFavorites();
   return ProviderScope(
-    overrides: [marketRepositoryProvider.overrideWithValue(repo)],
+    overrides: [
+      marketRepositoryProvider.overrideWithValue(repo),
+      favoritesRepositoryProvider.overrideWithValue(favs),
+    ],
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const <LocalizationsDelegate<Object>>[
@@ -64,6 +75,16 @@ Widget _harness({required MockMarketRepository repo}) {
       home: const MarketPage(),
     ),
   );
+}
+
+FavoritesRepository _stubFavorites({Set<String> initial = const <String>{}}) {
+  final _MockFavorites favs = _MockFavorites();
+  when(favs.watchFavorites).thenAnswer((_) => Stream<Set<String>>.value(initial));
+  when(favs.getFavoriteIds).thenAnswer((_) async => initial);
+  when(() => favs.toggleFavorite(any())).thenAnswer(
+    (_) async => const Right<Failure, bool>(true),
+  );
+  return favs;
 }
 
 void _stubGlobalAndTrendingSuccess(MockMarketRepository repo) {
@@ -170,5 +191,41 @@ void main() {
     expect(find.byType(CoinListItem), findsOneWidget);
     expect(find.text('Ethereum'), findsOneWidget);
     expect(find.text('Bitcoin'), findsNothing);
+  });
+
+  testWidgets('star icon reflects favoritesStreamProvider and tap toggles', (
+    WidgetTester tester,
+  ) async {
+    when(() => repo.getCoins(page: 1)).thenAnswer(
+      (_) async => const Right<Failure, List<Coin>>(<Coin>[_btc, _eth]),
+    );
+    _stubGlobalAndTrendingSuccess(repo);
+
+    final _MockFavorites favs = _MockFavorites();
+    when(favs.watchFavorites).thenAnswer(
+      (_) => Stream<Set<String>>.value(<String>{'ethereum'}),
+    );
+    when(favs.getFavoriteIds).thenAnswer((_) async => <String>{'ethereum'});
+    when(() => favs.toggleFavorite('bitcoin')).thenAnswer(
+      (_) async => const Right<Failure, bool>(true),
+    );
+
+    await tester.pumpWidget(_harness(repo: repo, favorites: favs));
+    await tester.pumpAndSettle();
+
+    // Ethereum already favorited → filled star; Bitcoin not → outline star.
+    expect(find.byIcon(Icons.star), findsOneWidget);
+    expect(find.byIcon(Icons.star_border), findsOneWidget);
+
+    final Finder btcStar = find
+        .descendant(
+          of: find.widgetWithText(CoinListItem, 'Bitcoin'),
+          matching: find.byIcon(Icons.star_border),
+        )
+        .first;
+    await tester.tap(btcStar);
+    await tester.pump();
+
+    verify(() => favs.toggleFavorite('bitcoin')).called(1);
   });
 }
