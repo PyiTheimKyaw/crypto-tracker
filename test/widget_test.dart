@@ -1,30 +1,71 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
+import 'package:crypto_tracker/app.dart';
+import 'package:crypto_tracker/core/error/failure.dart';
+import 'package:crypto_tracker/core/providers/core_providers.dart';
+import 'package:crypto_tracker/features/favorites/domain/repositories/favorites_repository.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
+import 'package:crypto_tracker/features/favorites/presentation/providers/favorites_provider.dart';
+import 'package:crypto_tracker/features/market/domain/entities/coin.dart';
+import 'package:crypto_tracker/features/market/domain/entities/global_market.dart';
+import 'package:crypto_tracker/features/market/domain/entities/trending_coin.dart';
+import 'package:crypto_tracker/features/market/presentation/providers/market_providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:mocktail/mocktail.dart';
 
-import 'package:crypto_tracker/main.dart';
+import 'helpers/market_mocks.dart';
+
+class _MockFavorites extends Mock implements FavoritesRepository {}
+
+class _MockSettingsBox extends Mock implements Box<String> {}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Market home renders title + LIVE label', (
+    WidgetTester tester,
+  ) async {
+    final MockMarketRepository repo = MockMarketRepository();
+    when(() => repo.getCoins(page: 1)).thenAnswer(
+      (_) async => const Right<Failure, List<Coin>>(<Coin>[]),
+    );
+    when(() => repo.getGlobalMarket()).thenAnswer(
+      (_) async => const Right<Failure, GlobalMarket>(
+        GlobalMarket(
+          totalMarketCapUsd: 0,
+          totalVolumeUsd: 0,
+          marketCapChangePercentage24hUsd: 0,
+        ),
+      ),
+    );
+    when(() => repo.getTrendingCoins()).thenAnswer(
+      (_) async =>
+          const Right<Failure, List<TrendingCoin>>(<TrendingCoin>[]),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    final _MockFavorites favs = _MockFavorites();
+    when(favs.watchFavorites)
+        .thenAnswer((_) => Stream<Set<String>>.value(<String>{}));
+    when(favs.getFavoriteIds).thenAnswer((_) async => <String>{});
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    final _MockSettingsBox settingsBox = _MockSettingsBox();
+    when(() => settingsBox.get(any<String>())).thenReturn(null);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          marketRepositoryProvider.overrideWithValue(repo),
+          favoritesRepositoryProvider.overrideWithValue(favs),
+          settingsBoxProvider.overrideWithValue(settingsBox),
+          connectivityStreamProvider.overrideWith(
+            (_) => Stream<bool>.value(true),
+          ),
+        ],
+        child: const CryptoTrackerApp(),
+      ),
+    );
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Markets'), findsOneWidget);
+    expect(find.textContaining('LIVE'), findsOneWidget);
   });
 }
