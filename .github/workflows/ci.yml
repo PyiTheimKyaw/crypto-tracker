@@ -5,10 +5,14 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: 3.44.2
 
 jobs:
   analyze-and-test:
@@ -23,7 +27,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 3.44.2
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 
@@ -38,8 +42,55 @@ jobs:
       - name: Generate localizations
         run: flutter gen-l10n
 
+      - name: Generate Freezed / json_serializable / hive_ce sources
+        run: dart run build_runner build
+
       - name: Analyze
         run: flutter analyze
 
       - name: Test
         run: flutter test --reporter=expanded
+
+  build-android-debug:
+    name: Build debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: analyze-and-test
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
+      - name: Generate Freezed / json_serializable / hive_ce sources
+        run: dart run build_runner build
+
+      - name: Build debug APK
+        run: flutter build apk --debug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: crypto-tracker-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 14
+          if-no-files-found: error
