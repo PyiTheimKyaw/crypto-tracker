@@ -3,13 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('App skeleton renders inside ProviderScope', (
+  testWidgets('App renders Markets header inside ProviderScope', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
       const ProviderScope(child: CryptoTrackerApp()),
     );
 
-    expect(find.text('Crypto Tracker — skeleton'), findsOneWidget);
+    expect(find.text('Markets'), findsOneWidget);
+    expect(find.text('LIVE · COINGECKO'), findsOneWidget);
   });
 }
