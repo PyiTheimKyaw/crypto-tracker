@@ -6,6 +6,8 @@ import '../../../../core/error/failure.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/loading_view.dart';
+import '../../../../core/widgets/offline_banner.dart';
 import '../../../../routing/app_router.dart';
 import '../../domain/entities/coin.dart';
 import '../providers/coin_list_notifier.dart';
@@ -91,20 +93,27 @@ class _MarketPageState extends ConsumerState<MarketPage> {
 
     return Scaffold(
       appBar: _buildAppBar(context, semantic),
-      body: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: CustomScrollView(
-          controller: _scroll,
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: <Widget>[
-            const SliverToBoxAdapter(child: GlobalMarketHeader()),
-            const SliverToBoxAdapter(child: TrendingCarousel()),
-            const SliverToBoxAdapter(child: CoinSearchBar()),
-            SliverToBoxAdapter(child: _listHeader(context, semantic)),
-            _buildCoinSliver(coinState),
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
-          ],
-        ),
+      body: Column(
+        children: <Widget>[
+          const OfflineBanner(),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _onRefresh,
+              child: CustomScrollView(
+                controller: _scroll,
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: <Widget>[
+                  const SliverToBoxAdapter(child: GlobalMarketHeader()),
+                  const SliverToBoxAdapter(child: TrendingCarousel()),
+                  const SliverToBoxAdapter(child: CoinSearchBar()),
+                  SliverToBoxAdapter(child: _listHeader(context, semantic)),
+                  _buildCoinSliver(coinState),
+                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -184,7 +193,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
       skipError: true,
       loading: () => const SliverFillRemaining(
         hasScrollBody: false,
-        child: Center(child: CircularProgressIndicator()),
+        child: MarketLoadingView(),
       ),
       error: (Object e, _) => SliverFillRemaining(
         hasScrollBody: false,

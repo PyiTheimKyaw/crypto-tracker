@@ -22,6 +22,13 @@ final Provider<NetworkInfo> networkInfoProvider = Provider<NetworkInfo>((
   return NetworkInfoImpl(ref.watch(connectivityProvider));
 });
 
+final StreamProvider<bool> connectivityStreamProvider =
+    StreamProvider<bool>((Ref ref) async* {
+      final NetworkInfo info = ref.watch(networkInfoProvider);
+      yield await info.isConnected;
+      yield* info.onConnectivityChanged;
+    });
+
 final Provider<Box<String>> coinsCacheBoxProvider = Provider<Box<String>>(
   (Ref ref) => Hive.box<String>(HiveBoxNames.coinsCache),
 );
@@ -33,6 +40,10 @@ final Provider<Box<String>> globalMarketCacheBoxProvider =
 
 final Provider<Box<String>> trendingCacheBoxProvider = Provider<Box<String>>(
   (Ref ref) => Hive.box<String>(HiveBoxNames.trendingCache),
+);
+
+final Provider<Box<String>> coinDetailCacheBoxProvider = Provider<Box<String>>(
+  (Ref ref) => Hive.box<String>(HiveBoxNames.coinDetailCache),
 );
 
 final Provider<Box<bool>> favoritesBoxProvider = Provider<Box<bool>>(

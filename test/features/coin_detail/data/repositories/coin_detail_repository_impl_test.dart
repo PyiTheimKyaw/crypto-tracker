@@ -1,6 +1,7 @@
 import 'package:crypto_tracker/core/error/exceptions.dart';
 import 'package:crypto_tracker/core/error/failure.dart';
 import 'package:crypto_tracker/core/network/network_info.dart';
+import 'package:crypto_tracker/features/coin_detail/data/datasources/coin_detail_local_datasource.dart';
 import 'package:crypto_tracker/features/coin_detail/data/datasources/coin_detail_remote_datasource.dart';
 import 'package:crypto_tracker/features/coin_detail/data/models/coin_detail_model.dart';
 import 'package:crypto_tracker/features/coin_detail/data/repositories/coin_detail_repository_impl.dart';
@@ -11,6 +12,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockRemote extends Mock implements CoinDetailRemoteDataSource {}
+
+class _MockLocal extends Mock implements CoinDetailLocalDataSource {}
 
 class _MockFavorites extends Mock implements FavoritesRepository {}
 
@@ -39,27 +42,32 @@ const CoinDetailModel _tModel = CoinDetailModel(
 
 void main() {
   late _MockRemote remote;
+  late _MockLocal local;
   late _MockFavorites favorites;
   late _MockNetworkInfo network;
   late CoinDetailRepositoryImpl repo;
 
   setUp(() {
     remote = _MockRemote();
+    local = _MockLocal();
     favorites = _MockFavorites();
     network = _MockNetworkInfo();
     repo = CoinDetailRepositoryImpl(
       remote: remote,
+      local: local,
       favorites: favorites,
       networkInfo: network,
     );
+    registerFallbackValue(_tModel);
   });
 
   group('online', () {
     setUp(() {
       when(() => network.isConnected).thenAnswer((_) async => true);
+      when(() => local.cache(any(), any())).thenAnswer((_) async {});
     });
 
-    test('returns Right(entity) and marks favorite when id is in set',
+    test('returns Right(entity), caches it, and marks favorite when id in set',
         () async {
       when(() => remote.getCoinDetail('ethereum'))
           .thenAnswer((_) async => _tModel);
@@ -75,6 +83,7 @@ void main() {
       expect(entity.id, 'ethereum');
       expect(entity.isFavorite, isTrue);
       expect(entity.currentPrice, 2095.85);
+      verify(() => local.cache('ethereum', _tModel)).called(1);
     });
 
     test('returns Right(entity) with isFavorite=false when id not in set',
@@ -105,13 +114,35 @@ void main() {
           ServerFailure('HTTP 429 · rate limit'),
         ),
       );
+      verifyNever(() => local.cache(any(), any()));
     });
   });
 
   group('offline', () {
-    test('returns Left(NetworkFailure) without touching remote or favorites',
-        () async {
+    setUp(() {
       when(() => network.isConnected).thenAnswer((_) async => false);
+    });
+
+    test('cache hit → Right(cached entity) with favorite merged', () async {
+      when(() => local.getCached('ethereum'))
+          .thenAnswer((_) async => _tModel);
+      when(favorites.getFavoriteIds)
+          .thenAnswer((_) async => <String>{'ethereum'});
+
+      final Either<Failure, CoinDetail> result =
+          await repo.getCoinDetail('ethereum');
+
+      expect(result.isRight(), isTrue);
+      final CoinDetail entity =
+          result.getRight().getOrElse(() => throw StateError('no value'));
+      expect(entity.id, 'ethereum');
+      expect(entity.isFavorite, isTrue);
+      verifyNever(() => remote.getCoinDetail(any()));
+    });
+
+    test('cache miss → Left(NetworkFailure)', () async {
+      when(() => local.getCached('ethereum'))
+          .thenThrow(const CacheException());
 
       final Either<Failure, CoinDetail> result =
           await repo.getCoinDetail('ethereum');
@@ -121,7 +152,6 @@ void main() {
         const Left<Failure, CoinDetail>(NetworkFailure()),
       );
       verifyNever(() => remote.getCoinDetail(any()));
-      verifyNever(favorites.getFavoriteIds);
     });
   });
 }

@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:crypto_tracker/core/error/failure.dart';
 import 'package:crypto_tracker/core/l10n/generated/app_localizations.dart';
+import 'package:crypto_tracker/core/providers/core_providers.dart';
 import 'package:crypto_tracker/core/theme/app_theme.dart';
+import 'package:crypto_tracker/core/widgets/loading_view.dart';
 import 'package:crypto_tracker/features/favorites/domain/repositories/favorites_repository.dart';
 import 'package:crypto_tracker/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:crypto_tracker/features/market/domain/entities/coin.dart';
@@ -55,12 +57,16 @@ const GlobalMarket _emptyGlobal = GlobalMarket(
 Widget _harness({
   required MockMarketRepository repo,
   FavoritesRepository? favorites,
+  bool online = true,
 }) {
   final FavoritesRepository favs = favorites ?? _stubFavorites();
   return ProviderScope(
     overrides: [
       marketRepositoryProvider.overrideWithValue(repo),
       favoritesRepositoryProvider.overrideWithValue(favs),
+      connectivityStreamProvider.overrideWith(
+        (_) => Stream<bool>.value(online),
+      ),
     ],
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -103,7 +109,7 @@ void main() {
     repo = MockMarketRepository();
   });
 
-  testWidgets('loading state shows a CircularProgressIndicator', (
+  testWidgets('loading state shows a MarketLoadingView skeleton', (
     WidgetTester tester,
   ) async {
     final Completer<Either<Failure, List<Coin>>> coins =
@@ -114,7 +120,7 @@ void main() {
     await tester.pumpWidget(_harness(repo: repo));
     await tester.pump();
 
-    expect(find.byType(CircularProgressIndicator), findsAtLeastNWidgets(1));
+    expect(find.byType(MarketLoadingView), findsOneWidget);
     expect(find.byType(CoinListItem), findsNothing);
 
     // Resolve the pending future so the test tears down cleanly.

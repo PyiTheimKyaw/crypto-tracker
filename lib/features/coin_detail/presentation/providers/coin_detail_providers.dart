@@ -4,6 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/providers/core_providers.dart';
 import '../../../favorites/presentation/providers/favorites_provider.dart';
+import '../../data/datasources/coin_detail_local_datasource.dart';
 import '../../data/datasources/coin_detail_remote_datasource.dart';
 import '../../data/repositories/coin_detail_repository_impl.dart';
 import '../../domain/entities/coin_detail.dart';
@@ -15,10 +16,18 @@ final Provider<CoinDetailRemoteDataSource> coinDetailRemoteDataSourceProvider =
       return CoinDetailRemoteDataSourceImpl(ref.watch(dioProvider));
     });
 
+final Provider<CoinDetailLocalDataSource> coinDetailLocalDataSourceProvider =
+    Provider<CoinDetailLocalDataSource>((Ref ref) {
+      return CoinDetailLocalDataSourceImpl(
+        ref.watch(coinDetailCacheBoxProvider),
+      );
+    });
+
 final Provider<CoinDetailRepository> coinDetailRepositoryProvider =
     Provider<CoinDetailRepository>((Ref ref) {
       return CoinDetailRepositoryImpl(
         remote: ref.watch(coinDetailRemoteDataSourceProvider),
+        local: ref.watch(coinDetailLocalDataSourceProvider),
         favorites: ref.watch(favoritesRepositoryProvider),
         networkInfo: ref.watch(networkInfoProvider),
       );

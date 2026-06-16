@@ -1,5 +1,6 @@
 import 'package:crypto_tracker/app.dart';
 import 'package:crypto_tracker/core/error/failure.dart';
+import 'package:crypto_tracker/core/providers/core_providers.dart';
 import 'package:crypto_tracker/features/favorites/domain/repositories/favorites_repository.dart';
 import 'package:crypto_tracker/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:crypto_tracker/features/market/domain/entities/coin.dart';
@@ -47,6 +48,9 @@ void main() {
         overrides: [
           marketRepositoryProvider.overrideWithValue(repo),
           favoritesRepositoryProvider.overrideWithValue(favs),
+          connectivityStreamProvider.overrideWith(
+            (_) => Stream<bool>.value(true),
+          ),
         ],
         child: const CryptoTrackerApp(),
       ),
