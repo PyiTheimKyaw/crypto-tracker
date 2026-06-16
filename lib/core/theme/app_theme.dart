@@ -154,6 +154,8 @@ class AppTheme {
         ? Typography.material2021().black
         : Typography.material2021().white;
 
+    const List<String> myanmarFallback = <String>['NotoSansMyanmar'];
+
     final TextTheme textTheme = baseText
         .copyWith(
           displayLarge: AppTextStyles.pageTitle,
@@ -165,6 +167,7 @@ class AppTheme {
         .apply(
           bodyColor: onSurface,
           displayColor: onSurface,
+          fontFamilyFallback: myanmarFallback,
         );
 
     return ThemeData(

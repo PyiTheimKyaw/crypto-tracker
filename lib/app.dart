@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'core/l10n/generated/app_localizations.dart';
 import 'core/theme/app_text_styles.dart';
 import 'core/theme/app_theme.dart';
 
@@ -9,11 +11,19 @@ class CryptoTrackerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Crypto Tracker',
+      onGenerateTitle: (BuildContext context) =>
+          AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
+      localizationsDelegates: const <LocalizationsDelegate<Object>>[
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       home: const _ThemePreviewScreen(),
     );
   }
@@ -25,11 +35,11 @@ class _ThemePreviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppSemanticColors semantic = context.semantic;
-    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final AppLocalizations l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Crypto Tracker'),
+        title: Text(l10n.appTitle),
       ),
       body: SafeArea(
         child: Padding(
@@ -44,7 +54,7 @@ class _ThemePreviewScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              const Text('Markets', style: AppTextStyles.pageTitle),
+              Text(l10n.markets, style: AppTextStyles.pageTitle),
               const SizedBox(height: 24),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -57,7 +67,7 @@ class _ThemePreviewScreen extends StatelessWidget {
                   children: <Widget>[
                     Expanded(
                       child: _StatBlock(
-                        label: 'TOP 20 · 24H',
+                        label: l10n.marketCap.toUpperCase(),
                         value: r'$2.44T',
                         delta: '-0.42%',
                         deltaColor: semantic.negative,
@@ -67,7 +77,7 @@ class _ThemePreviewScreen extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _StatBlock(
-                        label: 'VOL 24H',
+                        label: l10n.volume24h.toUpperCase(),
                         value: r'$93.22B',
                         delta: '+1.20%',
                         deltaColor: semantic.positive,
@@ -75,6 +85,13 @@ class _ThemePreviewScreen extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '${l10n.trending}  ·  ${l10n.favorites}  ·  ${l10n.searchCoins}',
+                style: AppTextStyles.coinSubtitle.copyWith(
+                  color: semantic.mutedLabel,
                 ),
               ),
               const SizedBox(height: 24),
@@ -92,13 +109,11 @@ class _ThemePreviewScreen extends StatelessWidget {
                     color: semantic.favoriteInactive,
                   ),
                   const SizedBox(width: 12),
-                  Text(
-                    'Surface: ',
-                    style: TextStyle(color: semantic.mutedLabel),
-                  ),
-                  Text(
-                    '0x${scheme.surface.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase()}',
-                    style: const TextStyle(fontFamily: 'monospace'),
+                  Expanded(
+                    child: Text(
+                      l10n.noInternet,
+                      style: TextStyle(color: semantic.mutedLabel),
+                    ),
                   ),
                 ],
               ),

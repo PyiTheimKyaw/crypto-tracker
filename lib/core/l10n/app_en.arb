@@ -1,0 +1,16 @@
+{
+  "@@locale": "en",
+  "appTitle": "Crypto Tracker",
+  "@appTitle": {
+    "description": "Application title shown in launcher and app bar."
+  },
+  "markets": "Markets",
+  "searchCoins": "Search coins",
+  "marketCap": "Market Cap",
+  "volume24h": "Volume 24h",
+  "trending": "Trending",
+  "favorites": "Favorites",
+  "noInternet": "No internet connection",
+  "loadError": "Failed to load",
+  "noResults": "No results"
+}
