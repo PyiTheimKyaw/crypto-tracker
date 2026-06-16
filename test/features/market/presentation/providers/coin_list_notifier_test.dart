@@ -71,7 +71,7 @@ void main() {
       final ProviderContainer container = _makeContainer(repo);
       container.listen<AsyncValue<CoinListState>>(
         coinListProvider,
-        (_, __) {},
+        (_, _) {},
       );
       await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
@@ -147,11 +147,11 @@ void main() {
       verifyNever(() => repo.getCoins(page: any(named: 'page')));
     });
 
-    test('transitions to AsyncError when next page fails', () async {
-      when(() => repo.getCoins(page: 1)).thenAnswer(
-        (_) async =>
-            Right<Failure, List<Coin>>(_coins(1, ApiConstants.perPage)),
-      );
+    test('keeps page 1 data and surfaces paginationError on failure',
+        () async {
+      final List<Coin> page1 = _coins(1, ApiConstants.perPage);
+      when(() => repo.getCoins(page: 1))
+          .thenAnswer((_) async => Right<Failure, List<Coin>>(page1));
       when(() => repo.getCoins(page: 2)).thenAnswer(
         (_) async =>
             const Left<Failure, List<Coin>>(NetworkFailure()),
@@ -161,13 +161,94 @@ void main() {
       await container.read(coinListProvider.future);
       await container.read(coinListProvider.notifier).loadNextPage();
 
-      final AsyncValue<CoinListState> snap = container.read(coinListProvider);
-      expect(snap.hasError, isTrue);
-      expect(snap.error, isA<NetworkFailure>());
+      final CoinListState state =
+          container.read(coinListProvider).requireValue;
+      expect(state.coins, page1);
+      expect(state.page, 1);
+      expect(state.hasMore, isTrue);
+      expect(state.paginationError, isA<NetworkFailure>());
+    });
+
+    test('successful retry after pagination failure clears the error',
+        () async {
+      final List<Coin> page1 = _coins(1, ApiConstants.perPage);
+      final List<Coin> page2 = _coins(21, 4);
+      int attempt = 0;
+      when(() => repo.getCoins(page: 1))
+          .thenAnswer((_) async => Right<Failure, List<Coin>>(page1));
+      when(() => repo.getCoins(page: 2)).thenAnswer((_) async {
+        attempt += 1;
+        if (attempt == 1) {
+          return const Left<Failure, List<Coin>>(NetworkFailure());
+        }
+        return Right<Failure, List<Coin>>(page2);
+      });
+
+      final ProviderContainer container = _makeContainer(repo);
+      await container.read(coinListProvider.future);
+      await container.read(coinListProvider.notifier).loadNextPage();
+      await container.read(coinListProvider.notifier).loadNextPage();
+
+      final CoinListState state =
+          container.read(coinListProvider).requireValue;
+      expect(state.paginationError, isNull);
+      expect(state.coins, <Coin>[...page1, ...page2]);
+      expect(state.page, 2);
     });
   });
 
   group('CoinListNotifier refresh', () {
+    test('failure keeps AsyncData and sets refreshError on state', () async {
+      final List<Coin> firstLoad = _coins(1, ApiConstants.perPage);
+      int callCount = 0;
+      when(() => repo.getCoins(page: 1)).thenAnswer((_) async {
+        callCount += 1;
+        if (callCount == 1) {
+          return Right<Failure, List<Coin>>(firstLoad);
+        }
+        return const Left<Failure, List<Coin>>(NetworkFailure());
+      });
+
+      final ProviderContainer container = _makeContainer(repo);
+      await container.read(coinListProvider.future);
+
+      await container.read(coinListProvider.notifier).refresh();
+
+      final AsyncValue<CoinListState> snap = container.read(coinListProvider);
+      expect(snap.hasValue, isTrue);
+      expect(snap.hasError, isFalse);
+      final CoinListState state = snap.requireValue;
+      expect(state.refreshError, isA<NetworkFailure>());
+      expect(state.coins, firstLoad);
+      expect(state.page, 1);
+    });
+
+    test('successful refresh after failure clears refreshError', () async {
+      final List<Coin> firstLoad = _coins(1, ApiConstants.perPage);
+      final List<Coin> reload = _coins(100, 4);
+      int callCount = 0;
+      when(() => repo.getCoins(page: 1)).thenAnswer((_) async {
+        callCount += 1;
+        if (callCount == 1) {
+          return Right<Failure, List<Coin>>(firstLoad);
+        }
+        if (callCount == 2) {
+          return const Left<Failure, List<Coin>>(NetworkFailure());
+        }
+        return Right<Failure, List<Coin>>(reload);
+      });
+
+      final ProviderContainer container = _makeContainer(repo);
+      await container.read(coinListProvider.future);
+      await container.read(coinListProvider.notifier).refresh();
+      await container.read(coinListProvider.notifier).refresh();
+
+      final CoinListState state =
+          container.read(coinListProvider).requireValue;
+      expect(state.refreshError, isNull);
+      expect(state.coins, reload);
+    });
+
     test('resets to page 1 and reloads', () async {
       final List<Coin> firstLoad = _coins(1, ApiConstants.perPage);
       final List<Coin> nextLoad = _coins(100, 4);

@@ -25,6 +25,16 @@ DioException _serverError({String path = '/x'}) => DioException(
   type: DioExceptionType.badResponse,
 );
 
+DioException _rateLimited({String path = '/x', Object? data}) => DioException(
+  requestOptions: RequestOptions(path: path),
+  response: Response<dynamic>(
+    requestOptions: RequestOptions(path: path),
+    statusCode: 429,
+    data: data,
+  ),
+  type: DioExceptionType.badResponse,
+);
+
 void main() {
   late _MockDio dio;
   late MarketRemoteDataSourceImpl source;
@@ -100,6 +110,38 @@ void main() {
         () => source.getCoins(page: 1),
         throwsA(isA<ServerException>()),
       );
+    });
+
+    test('CoinGecko 429 body error_message bubbles into ServerException',
+        () async {
+      when(
+        () => dio.get<List<dynamic>>(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenThrow(
+        _rateLimited(
+          data: <String, dynamic>{
+            'status': <String, dynamic>{
+              'error_code': 429,
+              'error_message':
+                  "You've exceeded the Rate Limit. Please visit https://www.coingecko.com/en/api/pricing to subscribe to our API plans for higher rate limits.",
+            },
+          },
+        ),
+      );
+
+      Object? caught;
+      try {
+        await source.getCoins(page: 1);
+      } catch (e) {
+        caught = e;
+      }
+
+      expect(caught, isA<ServerException>());
+      final String message = (caught! as ServerException).message;
+      expect(message, contains('HTTP 429'));
+      expect(message, contains("exceeded the Rate Limit"));
     });
   });
 

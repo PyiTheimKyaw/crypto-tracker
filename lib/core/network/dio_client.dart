@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:dio/dio.dart';
 
 import '../constants/api_constants.dart';
+import 'retry_interceptor.dart';
 
 class DioClient {
   const DioClient._();
@@ -18,6 +19,8 @@ class DioClient {
         headers: const <String, String>{'Accept': 'application/json'},
       ),
     );
+
+    dio.interceptors.add(RetryInterceptor(dio));
 
     dio.interceptors.add(
       LogInterceptor(

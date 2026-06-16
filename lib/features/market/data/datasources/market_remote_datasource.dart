@@ -80,9 +80,42 @@ class MarketRemoteDataSourceImpl implements MarketRemoteDataSource {
 
   String _describe(DioException e) {
     final int? status = e.response?.statusCode;
-    if (status != null) {
-      return 'HTTP $status on ${e.requestOptions.path}';
+    final String? bodyMessage = _extractMessage(e.response?.data);
+    final String head = status != null
+        ? 'HTTP $status'
+        : (e.message ?? e.type.name);
+    if (bodyMessage != null && bodyMessage.isNotEmpty) {
+      return '$head · $bodyMessage';
     }
-    return e.message ?? e.type.name;
+    return '$head on ${e.requestOptions.path}';
+  }
+
+  String? _extractMessage(Object? data) {
+    if (data == null) {
+      return null;
+    }
+    if (data is String) {
+      return data.isEmpty ? null : data.trim();
+    }
+    if (data is Map<String, dynamic>) {
+      // CoinGecko 429: { status: { error_code, error_message } }
+      final Object? status = data['status'];
+      if (status is Map<String, dynamic>) {
+        final Object? msg = status['error_message'];
+        if (msg is String && msg.isNotEmpty) {
+          return msg;
+        }
+      }
+      // Generic API error shapes
+      final Object? err = data['error'];
+      if (err is String && err.isNotEmpty) {
+        return err;
+      }
+      final Object? msg = data['message'];
+      if (msg is String && msg.isNotEmpty) {
+        return msg;
+      }
+    }
+    return null;
   }
 }

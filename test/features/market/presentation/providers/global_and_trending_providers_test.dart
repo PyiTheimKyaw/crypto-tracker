@@ -49,7 +49,7 @@ void main() {
       final ProviderContainer container = _makeContainer(repo);
       container.listen<AsyncValue<GlobalMarket>>(
         globalMarketProvider,
-        (_, __) {},
+        (_, _) {},
       );
       await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
@@ -85,7 +85,7 @@ void main() {
       final ProviderContainer container = _makeContainer(repo);
       container.listen<AsyncValue<List<TrendingCoin>>>(
         trendingProvider,
-        (_, __) {},
+        (_, _) {},
       );
       await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
