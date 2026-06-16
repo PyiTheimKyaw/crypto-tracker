@@ -25,6 +25,14 @@ class Formatters {
     return '$sign${value.toStringAsFixed(2)}%';
   }
 
+  static String compactNumber(double value, {String locale = 'en_US'}) {
+    return NumberFormat.compact(locale: locale).format(value);
+  }
+
+  static String supply(double value, String symbol, {String locale = 'en_US'}) {
+    return '${compactNumber(value, locale: locale)} ${symbol.toUpperCase()}';
+  }
+
   static String marketCapSubtitle(
     double marketCap, {
     String locale = 'en_US',
