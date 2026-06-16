@@ -133,6 +133,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cachedTag => 'CACHED';
 
   @override
+  String get language => 'Language';
+
+  @override
+  String get systemDefault => 'System default';
+
+  @override
   String noResultsForQuery(String query) {
     return 'No results · \"$query\"';
   }

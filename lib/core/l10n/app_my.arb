@@ -78,6 +78,8 @@
   "sourceCoingecko": "ရင်းမြစ်  ·  COINGECKO",
   "liveCoingecko": "တိုက်ရိုက်  ·  COINGECKO",
   "cachedTag": "သိမ်းထား",
+  "language": "ဘာသာစကား",
+  "systemDefault": "စနစ်အလိုက်",
 
   "noResultsForQuery": "ရလဒ်မရှိ · \"{query}\"",
   "@noResultsForQuery": {

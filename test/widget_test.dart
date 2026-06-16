@@ -2,6 +2,7 @@ import 'package:crypto_tracker/app.dart';
 import 'package:crypto_tracker/core/error/failure.dart';
 import 'package:crypto_tracker/core/providers/core_providers.dart';
 import 'package:crypto_tracker/features/favorites/domain/repositories/favorites_repository.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:crypto_tracker/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:crypto_tracker/features/market/domain/entities/coin.dart';
 import 'package:crypto_tracker/features/market/domain/entities/global_market.dart';
@@ -15,6 +16,8 @@ import 'package:mocktail/mocktail.dart';
 import 'helpers/market_mocks.dart';
 
 class _MockFavorites extends Mock implements FavoritesRepository {}
+
+class _MockSettingsBox extends Mock implements Box<String> {}
 
 void main() {
   testWidgets('Market home renders title + LIVE label', (
@@ -43,11 +46,15 @@ void main() {
         .thenAnswer((_) => Stream<Set<String>>.value(<String>{}));
     when(favs.getFavoriteIds).thenAnswer((_) async => <String>{});
 
+    final _MockSettingsBox settingsBox = _MockSettingsBox();
+    when(() => settingsBox.get(any<String>())).thenReturn(null);
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           marketRepositoryProvider.overrideWithValue(repo),
           favoritesRepositoryProvider.overrideWithValue(favs),
+          settingsBoxProvider.overrideWithValue(settingsBox),
           connectivityStreamProvider.overrideWith(
             (_) => Stream<bool>.value(true),
           ),

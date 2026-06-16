@@ -326,6 +326,18 @@ abstract class AppLocalizations {
   /// **'CACHED'**
   String get cachedTag;
 
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @systemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get systemDefault;
+
   /// No description provided for @noResultsForQuery.
   ///
   /// In en, this message translates to:

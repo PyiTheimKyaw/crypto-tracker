@@ -49,3 +49,7 @@ final Provider<Box<String>> coinDetailCacheBoxProvider = Provider<Box<String>>(
 final Provider<Box<bool>> favoritesBoxProvider = Provider<Box<bool>>(
   (Ref ref) => Hive.box<bool>(HiveBoxNames.favorites),
 );
+
+final Provider<Box<String>> settingsBoxProvider = Provider<Box<String>>(
+  (Ref ref) => Hive.box<String>(HiveBoxNames.settings),
+);

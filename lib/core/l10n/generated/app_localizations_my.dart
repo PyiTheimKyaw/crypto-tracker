@@ -133,6 +133,12 @@ class AppLocalizationsMy extends AppLocalizations {
   String get cachedTag => 'သိမ်းထား';
 
   @override
+  String get language => 'ဘာသာစကား';
+
+  @override
+  String get systemDefault => 'စနစ်အလိုက်';
+
+  @override
   String noResultsForQuery(String query) {
     return 'ရလဒ်မရှိ · \"$query\"';
   }

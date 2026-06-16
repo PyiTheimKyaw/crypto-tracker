@@ -8,6 +8,7 @@ class HiveBoxNames {
   static const String trendingCache = 'trending_cache';
   static const String coinDetailCache = 'coin_detail_cache';
   static const String favorites = 'favorites';
+  static const String settings = 'settings';
 }
 
 Future<void> initHive() async {
@@ -19,5 +20,6 @@ Future<void> initHive() async {
     Hive.openBox<String>(HiveBoxNames.trendingCache).then((_) {}),
     Hive.openBox<String>(HiveBoxNames.coinDetailCache).then((_) {}),
     Hive.openBox<bool>(HiveBoxNames.favorites).then((_) {}),
+    Hive.openBox<String>(HiveBoxNames.settings).then((_) {}),
   ]);
 }

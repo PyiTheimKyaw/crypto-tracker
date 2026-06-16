@@ -81,6 +81,8 @@
   "sourceCoingecko": "SOURCE  ·  COINGECKO",
   "liveCoingecko": "LIVE  ·  COINGECKO",
   "cachedTag": "CACHED",
+  "language": "Language",
+  "systemDefault": "System default",
 
   "noResultsForQuery": "No results · \"{query}\"",
   "@noResultsForQuery": {

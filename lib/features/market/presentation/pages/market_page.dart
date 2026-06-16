@@ -6,6 +6,7 @@ import '../../../../core/error/failure.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/language_picker_sheet.dart';
 import '../../../../core/widgets/loading_view.dart';
 import '../../../../core/widgets/offline_banner.dart';
 import '../../../../routing/app_router.dart';
@@ -150,16 +151,24 @@ class _MarketPageState extends ConsumerState<MarketPage> {
       actions: <Widget>[
         Padding(
           padding: const EdgeInsets.only(right: 20),
-          child: Container(
-            width: 36,
-            height: 36,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: semantic.tileBackground,
-              border: Border.all(color: semantic.tileBorder),
-              shape: BoxShape.circle,
+          child: Material(
+            color: semantic.tileBackground,
+            shape: CircleBorder(
+              side: BorderSide(color: semantic.tileBorder),
             ),
-            child: Icon(Icons.more_horiz, size: 18, color: semantic.mutedLabel),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () => showLanguagePicker(context),
+              child: SizedBox(
+                width: 36,
+                height: 36,
+                child: Icon(
+                  Icons.language,
+                  size: 18,
+                  color: semantic.mutedLabel,
+                ),
+              ),
+            ),
           ),
         ),
       ],
