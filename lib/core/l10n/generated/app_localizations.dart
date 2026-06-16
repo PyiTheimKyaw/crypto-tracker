@@ -116,18 +116,6 @@ abstract class AppLocalizations {
   /// **'Search coins'**
   String get searchCoins;
 
-  /// No description provided for @marketCap.
-  ///
-  /// In en, this message translates to:
-  /// **'Market Cap'**
-  String get marketCap;
-
-  /// No description provided for @volume24h.
-  ///
-  /// In en, this message translates to:
-  /// **'Volume 24h'**
-  String get volume24h;
-
   /// No description provided for @trending.
   ///
   /// In en, this message translates to:
@@ -139,6 +127,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Favorites'**
   String get favorites;
+
+  /// No description provided for @marketCap.
+  ///
+  /// In en, this message translates to:
+  /// **'Market Cap'**
+  String get marketCap;
+
+  /// No description provided for @volume24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume 24h'**
+  String get volume24h;
 
   /// No description provided for @noInternet.
   ///
@@ -157,6 +157,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No results'**
   String get noResults;
+
+  /// No description provided for @liveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE'**
+  String get liveLabel;
+
+  /// No description provided for @source.
+  ///
+  /// In en, this message translates to:
+  /// **'SOURCE'**
+  String get source;
+
+  /// No description provided for @top20Day.
+  ///
+  /// In en, this message translates to:
+  /// **'TOP 20 · 24H'**
+  String get top20Day;
+
+  /// No description provided for @volumeShort.
+  ///
+  /// In en, this message translates to:
+  /// **'VOL 24H'**
+  String get volumeShort;
+
+  /// No description provided for @trending24h.
+  ///
+  /// In en, this message translates to:
+  /// **'TRENDING · 24H'**
+  String get trending24h;
+
+  /// No description provided for @trendingCoinsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} COINS'**
+  String trendingCoinsCount(int count);
+
+  /// No description provided for @assetHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'# ASSET'**
+  String get assetHeader;
+
+  /// No description provided for @priceHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'PRICE · 24H'**
+  String get priceHeader;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @favorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite'**
+  String get favorite;
+
+  /// No description provided for @unfavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfavorite'**
+  String get unfavorite;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @favoriteUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update favorite: {error}'**
+  String favoriteUpdateFailed(String error);
+
+  /// No description provided for @refreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh failed: {error}'**
+  String refreshFailed(String error);
+
+  /// No description provided for @hours24Short.
+  ///
+  /// In en, this message translates to:
+  /// **'24h'**
+  String get hours24Short;
+
+  /// No description provided for @rankNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'RANK #{rank}'**
+  String rankNumber(int rank);
+
+  /// No description provided for @marketStats.
+  ///
+  /// In en, this message translates to:
+  /// **'MARKET STATS'**
+  String get marketStats;
+
+  /// No description provided for @marketCapUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'MARKET CAP'**
+  String get marketCapUpper;
+
+  /// No description provided for @volume24hUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'VOLUME 24H'**
+  String get volume24hUpper;
+
+  /// No description provided for @allTimeHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'ALL-TIME HIGH'**
+  String get allTimeHigh;
+
+  /// No description provided for @allTimeLow.
+  ///
+  /// In en, this message translates to:
+  /// **'ALL-TIME LOW'**
+  String get allTimeLow;
+
+  /// No description provided for @circulatingSupplyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CIRCULATING SUPPLY'**
+  String get circulatingSupplyLabel;
+
+  /// No description provided for @maxSupplyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MAX SUPPLY'**
+  String get maxSupplyLabel;
+
+  /// No description provided for @uncappedSupply.
+  ///
+  /// In en, this message translates to:
+  /// **'∞ uncapped'**
+  String get uncappedSupply;
+
+  /// No description provided for @aboutCoin.
+  ///
+  /// In en, this message translates to:
+  /// **'ABOUT {name}'**
+  String aboutCoin(String name);
+
+  /// No description provided for @sourceCoingecko.
+  ///
+  /// In en, this message translates to:
+  /// **'SOURCE  ·  COINGECKO'**
+  String get sourceCoingecko;
+
+  /// No description provided for @liveCoingecko.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE  ·  COINGECKO'**
+  String get liveCoingecko;
+
+  /// No description provided for @cachedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'CACHED'**
+  String get cachedTag;
+
+  /// No description provided for @noResultsForQuery.
+  ///
+  /// In en, this message translates to:
+  /// **'No results · \"{query}\"'**
+  String noResultsForQuery(String query);
 }
 
 class _AppLocalizationsDelegate

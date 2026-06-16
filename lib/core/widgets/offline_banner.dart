@@ -53,7 +53,7 @@ class _OfflineBar extends StatelessWidget {
                 ),
               ),
               Text(
-                'CACHED',
+                l10n.cachedTag,
                 style: AppTextStyles.sectionLabel.copyWith(
                   color: semantic.negative,
                 ),

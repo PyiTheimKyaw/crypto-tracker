@@ -1,13 +1,88 @@
 {
   "@@locale": "my",
+
   "appTitle": "Crypto ခြေရာခံ",
+
   "markets": "ဈေးကွက်များ",
   "searchCoins": "ကွိင်များ ရှာဖွေပါ",
-  "marketCap": "ဈေးကွက်တန်ဖိုး",
-  "volume24h": "ပမာဏ ၂၄ နာရီ",
   "trending": "ခေတ်စားနေသော",
   "favorites": "ကြိုက်နှစ်သက်ရာများ",
+
+  "marketCap": "ဈေးကွက်တန်ဖိုး",
+  "volume24h": "ပမာဏ ၂၄ နာရီ",
+
   "noInternet": "အင်တာနက် ချိတ်ဆက်မှု မရှိပါ",
   "loadError": "ဒေတာ ဖွင့်၍ မရပါ",
-  "noResults": "ရလဒ် မရှိပါ"
+  "noResults": "ရလဒ် မရှိပါ",
+
+  "liveLabel": "တိုက်ရိုက်",
+  "source": "ရင်းမြစ်",
+
+  "top20Day": "ထိပ်တန်း ၂၀ · ၂၄ နာရီ",
+  "volumeShort": "ပမာဏ ၂၄ နာရီ",
+  "trending24h": "ခေတ်စားနေသော · ၂၄ နာရီ",
+  "trendingCoinsCount": "ကွိုင် {count} ခု",
+  "@trendingCoinsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "assetHeader": "# ပိုင်ဆိုင်မှု",
+  "priceHeader": "စျေးနှုန်း · ၂၄ နာရီ",
+
+  "retry": "ပြန်စမ်းရန်",
+  "favorite": "ကြိုက်ရန်",
+  "unfavorite": "ဖယ်ရှားရန်",
+  "back": "ပြန်သွားရန်",
+
+  "favoriteUpdateFailed": "ကြိုက်နှစ်သက်ရာ ပြောင်းလဲ၍ မရပါ — {error}",
+  "@favoriteUpdateFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "refreshFailed": "ပြန်လည် ဖွင့်ရန် မအောင်မြင်ပါ — {error}",
+  "@refreshFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "hours24Short": "၂၄ နာရီ",
+
+  "rankNumber": "အဆင့် #{rank}",
+  "@rankNumber": {
+    "placeholders": {
+      "rank": { "type": "int" }
+    }
+  },
+
+  "marketStats": "ဈေးကွက် စာရင်းအင်း",
+  "marketCapUpper": "ဈေးကွက်တန်ဖိုး",
+  "volume24hUpper": "ပမာဏ ၂၄ နာရီ",
+  "allTimeHigh": "အမြင့်ဆုံး စျေးနှုန်း",
+  "allTimeLow": "အနိမ့်ဆုံး စျေးနှုန်း",
+  "circulatingSupplyLabel": "လည်ပတ်နေသော ပမာဏ",
+  "maxSupplyLabel": "အများဆုံး ပမာဏ",
+  "uncappedSupply": "∞ ကန့်သတ်မထား",
+
+  "aboutCoin": "{name} အကြောင်း",
+  "@aboutCoin": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "sourceCoingecko": "ရင်းမြစ်  ·  COINGECKO",
+  "liveCoingecko": "တိုက်ရိုက်  ·  COINGECKO",
+  "cachedTag": "သိမ်းထား",
+
+  "noResultsForQuery": "ရလဒ်မရှိ · \"{query}\"",
+  "@noResultsForQuery": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  }
 }

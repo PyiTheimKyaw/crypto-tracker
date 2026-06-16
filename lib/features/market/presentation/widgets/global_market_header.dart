@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/formatters.dart';
@@ -36,6 +37,7 @@ class GlobalMarketHeader extends ConsumerWidget {
     return Builder(
       builder: (BuildContext context) {
         final AppSemanticColors semantic = context.semantic;
+        final AppLocalizations l10n = AppLocalizations.of(context);
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           child: Container(
@@ -53,7 +55,7 @@ class GlobalMarketHeader extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'TOP 20 · 24H',
+                        l10n.top20Day,
                         style: AppTextStyles.sectionLabel.copyWith(
                           color: semantic.mutedLabel,
                         ),
@@ -85,7 +87,7 @@ class GlobalMarketHeader extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      'VOL 24H',
+                      l10n.volumeShort,
                       style: AppTextStyles.sectionLabel.copyWith(
                         color: semantic.mutedLabel,
                       ),

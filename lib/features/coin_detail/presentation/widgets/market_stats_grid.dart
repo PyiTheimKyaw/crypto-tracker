@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/formatters.dart';
@@ -13,6 +14,7 @@ class MarketStatsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppSemanticColors semantic = context.semantic;
+    final AppLocalizations l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -20,7 +22,7 @@ class MarketStatsGrid extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            'MARKET STATS',
+            l10n.marketStats,
             style: AppTextStyles.sectionLabel.copyWith(
               color: semantic.mutedLabel,
             ),
@@ -30,14 +32,14 @@ class MarketStatsGrid extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: _StatTile(
-                  label: 'MARKET CAP',
+                  label: l10n.marketCapUpper,
                   value: Formatters.compactCurrency(coin.marketCap),
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: _StatTile(
-                  label: 'VOLUME 24H',
+                  label: l10n.volume24hUpper,
                   value: Formatters.compactCurrency(coin.totalVolume),
                 ),
               ),
@@ -48,7 +50,7 @@ class MarketStatsGrid extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: _StatTile(
-                  label: 'ALL-TIME HIGH',
+                  label: l10n.allTimeHigh,
                   value: Formatters.price(coin.ath),
                   delta: coin.athChangePercentage,
                 ),
@@ -56,7 +58,7 @@ class MarketStatsGrid extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: _StatTile(
-                  label: 'ALL-TIME LOW',
+                  label: l10n.allTimeLow,
                   value: Formatters.price(coin.atl),
                   delta: coin.atlChangePercentage,
                 ),
@@ -68,7 +70,7 @@ class MarketStatsGrid extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: _StatTile(
-                  label: 'CIRCULATING SUPPLY',
+                  label: l10n.circulatingSupplyLabel,
                   value:
                       Formatters.supply(coin.circulatingSupply, coin.symbol),
                 ),
@@ -76,9 +78,9 @@ class MarketStatsGrid extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: _StatTile(
-                  label: 'MAX SUPPLY',
+                  label: l10n.maxSupplyLabel,
                   value: coin.maxSupply == null
-                      ? '∞ uncapped'
+                      ? l10n.uncappedSupply
                       : Formatters.supply(coin.maxSupply!, coin.symbol),
                 ),
               ),

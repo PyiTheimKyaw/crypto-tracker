@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/formatters.dart';
@@ -31,6 +32,7 @@ class CoinListItem extends ConsumerWidget {
       data: (Set<String> ids) => ids.contains(coin.id),
       orElse: () => coin.isFavorite,
     );
+    final AppLocalizations l10n = AppLocalizations.of(context);
 
     return InkWell(
       onTap: onTap,
@@ -66,11 +68,11 @@ class CoinListItem extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 16),
             IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-              tooltip: isFavorite ? 'Unfavorite' : 'Favorite',
+              tooltip: isFavorite ? l10n.unfavorite : l10n.favorite,
               icon: Icon(
                 isFavorite ? Icons.star : Icons.star_border,
                 color: isFavorite
@@ -80,29 +82,31 @@ class CoinListItem extends ConsumerWidget {
               ),
               onPressed: () => _onToggle(context, ref),
             ),
-            const SizedBox(width: 4),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Text(
-                  Formatters.price(coin.currentPrice),
-                  style: AppTextStyles.priceSmall,
-                ),
-                const SizedBox(height: 4),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: changeBg,
-                    borderRadius: BorderRadius.circular(4),
+            // const SizedBox(width: 4),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Text(
+                    Formatters.price(coin.currentPrice),
+                    style: AppTextStyles.priceSmall,
                   ),
-                  child: Text(
-                    Formatters.percent(coin.priceChangePercentage24h),
-                    style:
-                        AppTextStyles.changeBadge.copyWith(color: changeColor),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: changeBg,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      Formatters.percent(coin.priceChangePercentage24h),
+                      style:
+                          AppTextStyles.changeBadge.copyWith(color: changeColor),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -116,6 +120,7 @@ class CoinListItem extends ConsumerWidget {
     if (!context.mounted) {
       return;
     }
+    final AppLocalizations l10n = AppLocalizations.of(context);
     result.match(
       (Failure failure) {
         ScaffoldMessenger.maybeOf(context)
@@ -123,7 +128,7 @@ class CoinListItem extends ConsumerWidget {
           ..showSnackBar(
             SnackBar(
               content: Text(
-                'Could not update favorite: ${failure.message}',
+                l10n.favoriteUpdateFailed(failure.message),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

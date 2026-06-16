@@ -1,16 +1,91 @@
 {
   "@@locale": "en",
+
   "appTitle": "Crypto Tracker",
   "@appTitle": {
     "description": "Application title shown in launcher and app bar."
   },
+
   "markets": "Markets",
   "searchCoins": "Search coins",
-  "marketCap": "Market Cap",
-  "volume24h": "Volume 24h",
   "trending": "Trending",
   "favorites": "Favorites",
+
+  "marketCap": "Market Cap",
+  "volume24h": "Volume 24h",
+
   "noInternet": "No internet connection",
   "loadError": "Failed to load",
-  "noResults": "No results"
+  "noResults": "No results",
+
+  "liveLabel": "LIVE",
+  "source": "SOURCE",
+
+  "top20Day": "TOP 20 · 24H",
+  "volumeShort": "VOL 24H",
+  "trending24h": "TRENDING · 24H",
+  "trendingCoinsCount": "{count} COINS",
+  "@trendingCoinsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "assetHeader": "# ASSET",
+  "priceHeader": "PRICE · 24H",
+
+  "retry": "Retry",
+  "favorite": "Favorite",
+  "unfavorite": "Unfavorite",
+  "back": "Back",
+
+  "favoriteUpdateFailed": "Could not update favorite: {error}",
+  "@favoriteUpdateFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "refreshFailed": "Refresh failed: {error}",
+  "@refreshFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "hours24Short": "24h",
+
+  "rankNumber": "RANK #{rank}",
+  "@rankNumber": {
+    "placeholders": {
+      "rank": { "type": "int" }
+    }
+  },
+
+  "marketStats": "MARKET STATS",
+  "marketCapUpper": "MARKET CAP",
+  "volume24hUpper": "VOLUME 24H",
+  "allTimeHigh": "ALL-TIME HIGH",
+  "allTimeLow": "ALL-TIME LOW",
+  "circulatingSupplyLabel": "CIRCULATING SUPPLY",
+  "maxSupplyLabel": "MAX SUPPLY",
+  "uncappedSupply": "∞ uncapped",
+
+  "aboutCoin": "ABOUT {name}",
+  "@aboutCoin": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "sourceCoingecko": "SOURCE  ·  COINGECKO",
+  "liveCoingecko": "LIVE  ·  COINGECKO",
+  "cachedTag": "CACHED",
+
+  "noResultsForQuery": "No results · \"{query}\"",
+  "@noResultsForQuery": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/formatters.dart';
@@ -77,7 +78,7 @@ class PriceHeader extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '24h',
+                      AppLocalizations.of(context).hours24Short,
                       style: AppTextStyles.coinSubtitle.copyWith(
                         color: semantic.mutedLabel,
                       ),

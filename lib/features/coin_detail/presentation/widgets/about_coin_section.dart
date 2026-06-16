@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/coin_detail.dart';
@@ -12,6 +13,7 @@ class AboutCoinSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppSemanticColors semantic = context.semantic;
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final String description = _firstSentences(coin.description, maxChars: 360);
 
     return Padding(
@@ -20,7 +22,7 @@ class AboutCoinSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            'ABOUT ${coin.name.toUpperCase()}',
+            l10n.aboutCoin(coin.name.toUpperCase()),
             style: AppTextStyles.sectionLabel.copyWith(
               color: semantic.mutedLabel,
             ),
@@ -38,7 +40,7 @@ class AboutCoinSection extends StatelessWidget {
               Icon(Icons.circle, size: 6, color: semantic.mutedLabel),
               const SizedBox(width: 6),
               Text(
-                'SOURCE  ·  COINGECKO',
+                l10n.sourceCoingecko,
                 style: AppTextStyles.sectionLabel.copyWith(
                   color: semantic.mutedLabel,
                 ),

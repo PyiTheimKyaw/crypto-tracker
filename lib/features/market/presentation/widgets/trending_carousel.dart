@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/formatters.dart';
@@ -15,6 +16,7 @@ class TrendingCarousel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<List<TrendingCoin>> state = ref.watch(trendingProvider);
     final AppSemanticColors semantic = context.semantic;
+    final AppLocalizations l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -24,7 +26,7 @@ class TrendingCarousel extends ConsumerWidget {
           Row(
             children: <Widget>[
               Text(
-                'TRENDING · 24H',
+                l10n.trending24h,
                 style: AppTextStyles.sectionLabel.copyWith(
                   color: semantic.mutedLabel,
                 ),
@@ -32,7 +34,7 @@ class TrendingCarousel extends ConsumerWidget {
               const Spacer(),
               state.maybeWhen(
                 data: (List<TrendingCoin> list) => Text(
-                  '${list.length} COINS  →',
+                  '${l10n.trendingCoinsCount(list.length)}  →',
                   style: AppTextStyles.sectionLabel.copyWith(
                     color: semantic.mutedLabel,
                   ),

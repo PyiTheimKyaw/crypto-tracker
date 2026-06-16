@@ -23,17 +23,19 @@ class CoinDetailPage extends ConsumerWidget {
     final AsyncValue<CoinDetail> state = ref.watch(coinDetailProvider(id));
     final AppSemanticColors semantic = context.semantic;
 
+    final AppLocalizations l10n = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.chevron_left),
-          tooltip: 'Back',
+          tooltip: l10n.back,
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: state.maybeWhen(
           data: (CoinDetail c) => Text(
-            '${c.symbol.toUpperCase()}  ·  RANK #${c.marketCapRank}',
+            '${c.symbol.toUpperCase()}  ·  ${l10n.rankNumber(c.marketCapRank)}',
             style: AppTextStyles.sectionLabel.copyWith(
               color: semantic.mutedLabel,
             ),
@@ -82,6 +84,7 @@ class _FavoriteAction extends ConsumerWidget {
       orElse: () => false,
     );
 
+    final AppLocalizations l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: Container(
@@ -95,7 +98,7 @@ class _FavoriteAction extends ConsumerWidget {
         ),
         child: IconButton(
           padding: EdgeInsets.zero,
-          tooltip: isFavorite ? 'Unfavorite' : 'Favorite',
+          tooltip: isFavorite ? l10n.unfavorite : l10n.favorite,
           icon: Icon(
             isFavorite ? Icons.star : Icons.star_border,
             color: isFavorite
@@ -115,6 +118,7 @@ class _FavoriteAction extends ConsumerWidget {
     if (!context.mounted) {
       return;
     }
+    final AppLocalizations l10n = AppLocalizations.of(context);
     result.match(
       (Failure failure) {
         ScaffoldMessenger.maybeOf(context)
@@ -122,7 +126,7 @@ class _FavoriteAction extends ConsumerWidget {
           ..showSnackBar(
             SnackBar(
               content: Text(
-                'Could not update favorite: ${failure.message}',
+                l10n.favoriteUpdateFailed(failure.message),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -163,7 +167,7 @@ class _ErrorView extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 16),
-            OutlinedButton(onPressed: onRetry, child: const Text('Retry')),
+            OutlinedButton(onPressed: onRetry, child: Text(l10n.retry)),
           ],
         ),
       ),

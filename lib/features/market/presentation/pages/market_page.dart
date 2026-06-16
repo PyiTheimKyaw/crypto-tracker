@@ -77,11 +77,12 @@ class _MarketPageState extends ConsumerState<MarketPage> {
       if (nextErr != null && nextErr != prevErr) {
         final ScaffoldMessengerState? messenger =
             ScaffoldMessenger.maybeOf(context);
+        final AppLocalizations l10n = AppLocalizations.of(context);
         messenger?.hideCurrentSnackBar();
         messenger?.showSnackBar(
           SnackBar(
             content: Text(
-              'Refresh failed: ${nextErr.message}',
+              l10n.refreshFailed(nextErr.message),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -135,7 +136,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
               Icon(Icons.circle, size: 6, color: semantic.mutedLabel),
               const SizedBox(width: 6),
               Text(
-                'LIVE  ·  COINGECKO',
+                l10n.liveCoingecko,
                 style: AppTextStyles.sectionLabel.copyWith(
                   color: semantic.mutedLabel,
                 ),
@@ -166,19 +167,20 @@ class _MarketPageState extends ConsumerState<MarketPage> {
   }
 
   Widget _listHeader(BuildContext context, AppSemanticColors semantic) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
       child: Row(
         children: <Widget>[
           Text(
-            '#  ASSET',
+            l10n.assetHeader,
             style: AppTextStyles.sectionLabel.copyWith(
               color: semantic.mutedLabel,
             ),
           ),
           const Spacer(),
           Text(
-            'PRICE · 24H',
+            l10n.priceHeader,
             style: AppTextStyles.sectionLabel.copyWith(
               color: semantic.mutedLabel,
             ),
@@ -275,7 +277,7 @@ class _ErrorView extends StatelessWidget {
           const SizedBox(height: 16),
           OutlinedButton(
             onPressed: onRetry,
-            child: const Text('Retry'),
+            child: Text(l10n.retry),
           ),
         ],
       ),
@@ -309,7 +311,7 @@ class _PaginationErrorTail extends StatelessWidget {
           const SizedBox(width: 12),
           TextButton(
             onPressed: onRetry,
-            child: const Text('Retry'),
+            child: Text(AppLocalizations.of(context).retry),
           ),
         ],
       ),
@@ -335,7 +337,9 @@ class _EmptyView extends StatelessWidget {
             Icon(Icons.search_off, size: 32, color: semantic.mutedLabel),
             const SizedBox(height: 12),
             Text(
-              query.isEmpty ? l10n.noResults : '${l10n.noResults} · "$query"',
+              query.isEmpty
+                  ? l10n.noResults
+                  : l10n.noResultsForQuery(query),
               style: TextStyle(color: semantic.mutedLabel),
               textAlign: TextAlign.center,
             ),
