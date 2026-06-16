@@ -15,7 +15,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get markets => 'ဈေးကွက်များ';
 
   @override
-  String get searchCoins => 'ကိုင်များ ရှာဖွေပါ';
+  String get searchCoins => 'ကွိင်များ ရှာဖွေပါ';
 
   @override
   String get marketCap => 'ဈေးကွက်တန်ဖိုး';
